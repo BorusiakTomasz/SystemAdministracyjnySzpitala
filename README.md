@@ -1,3 +1,3 @@
 # SystemAdministracyjnySzpitala
 
-Program powstał w celu doskonalenia umijętności programistycznych + projekt zaliczeniowy.
+Program powstał w celu doskonalenia umiejętności programistycznych + projekt zaliczeniowy.
