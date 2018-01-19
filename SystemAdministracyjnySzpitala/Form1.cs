@@ -12,12 +12,18 @@ using System.Windows.Forms;
 
 namespace SystemAdministracyjnySzpitala
 {
+    /// <summary>
+    ///     Główna klasa programu, która przechowuje listy wszystkich obiektów do obsługi listBox'ów.
+    /// </summary>
     public partial class Form1 : Form
     {
-        private static List<Lekarz> listaLekarzy;
-        private static List<Pielegniarka> listaPielegniarek;
-        private static List<Administrator> listaAdministratorow;
+        public static List<Lekarz> listaLekarzy;
+        public static List<Pielegniarka> listaPielegniarek;
+        public static List<Administrator> listaAdministratorow;
 
+        /// <summary>
+        ///     Konstruktor ma za zadanie wypełnić wszystkie listy danymi z plików.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -26,6 +32,9 @@ namespace SystemAdministracyjnySzpitala
             ZainicjujListeAdministratorow();
         }
         
+        /// <summary>
+        ///     Funkcja ma za zadanie odczytac(zdeserializować) dane zapisane w pliku, innymi słowy odczyt z pliku i zapisanie do listaLekarzy.
+        /// </summary>
         private void ZainicjujListeLekarzy()
         {
             Stream stream = File.Open("LekarzDB.dat", FileMode.Open);
@@ -33,7 +42,10 @@ namespace SystemAdministracyjnySzpitala
             listaLekarzy = (List<Lekarz>)bf.Deserialize(stream);
             stream.Close();
         }
-        
+
+        /// <summary>
+        ///     Funkcja ma za zadanie odczytac(zdeserializować) dane zapisane w pliku, innymi słowy odczyt z pliku i zapisanie do listaPielegniarek.
+        /// </summary>
         private void ZainicjujListePielegniarek()
         {
             Stream stream = File.Open("PielegniarkaDB.dat", FileMode.Open);
@@ -41,7 +53,10 @@ namespace SystemAdministracyjnySzpitala
             listaPielegniarek = (List<Pielegniarka>)bf.Deserialize(stream);
             stream.Close();
         }
-        
+
+        /// <summary>
+        ///     Funkcja ma za zadanie odczytac(zdeserializować) dane zapisane w pliku, innymi słowy odczyt z pliku i zapisanie do listaAdministratorów.
+        /// </summary>
         private void ZainicjujListeAdministratorow()
         {
             Stream stream = File.Open("AdministratorDB.dat", FileMode.Open);
@@ -50,6 +65,10 @@ namespace SystemAdministracyjnySzpitala
             stream.Close();
         }
 
+        /// <summary>
+        ///     Zdarzenie sprawdza kto chce się zalogować i gdy dane były poprawne otwiera nowe okno z odpowiednim widokiem, a jeśli nie to wyświetli komunikat.
+        ///     Po prawidłowym zalogowaniu się osoby zostaje otwarte odpowiednie okno (Lekarz/Pielegniarka - Form2, Administrator - Form3), a okno logowania zostaje ukryte.
+        /// </summary>
         private void Zaloguj_Click(object sender, EventArgs e)
         {
             bool isLogin = false;
@@ -109,6 +128,9 @@ namespace SystemAdministracyjnySzpitala
             }
         }
 
+        /// <summary>
+        ///     Zdarzenie zapisuje(serializuje) dane z list do pliku i zamyka aplikacje.
+        /// </summary>
         private void Zamknij_Click(object sender, EventArgs e)
         {
             ZapiszDaneAdministratorow();
@@ -118,6 +140,9 @@ namespace SystemAdministracyjnySzpitala
             Application.Exit();
         }
 
+        /// <summary>
+        ///     Funkcja zapisuje(serializuje) dane z listaAdministratorów do pliku.
+        /// </summary>
         private void ZapiszDaneAdministratorow()
         {
             Stream stream = File.Open("AdministratorDB.dat", FileMode.Create);
@@ -126,6 +151,9 @@ namespace SystemAdministracyjnySzpitala
             stream.Close();
         }
 
+        /// <summary>
+        ///     Funkcja zapisuje(serializuje) dane z listaLekarzy do pliku.
+        /// </summary>
         private void ZapiszDaneLekarzy()
         {
             Stream stream = File.Open("LekarzDB.dat", FileMode.Create);
@@ -134,6 +162,9 @@ namespace SystemAdministracyjnySzpitala
             stream.Close();
         }
 
+        /// <summary>
+        ///     Funkcja zapisuje(serializuje) dane z listaPielegniarek do pliku.
+        /// </summary>
         private void ZapiszDanePielegniarek()
         {
             Stream stream = File.Open("PielegniarkaDB.dat", FileMode.Create);
@@ -142,6 +173,19 @@ namespace SystemAdministracyjnySzpitala
             stream.Close();
         }
 
+        /// <summary>
+        ///     Funkcja dodaje "pracownika" do odpowiadającej mu listy. Dziala to na takiej zasadzie, ze gdy użyje tej funkcji na obiekcie Administrator to Administrator zostanie dodany do 
+        ///     listaAdministratorow. Jeśli to był Lekarz to do listaLekarzy zostanie dodany. Na potrzeby programu funkcja moze przyjac tylko 3 typy danych - Administrator, Lekarz i Pielegniarka.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     Obsługuje tylko 3 typy:
+        ///       - Administrator,
+        ///       - Lekarz,
+        ///       - Pielegniarka.
+        /// </typeparam>
+        /// <param name="pracownik">
+        ///     Przechowuje pracownika, który ma zostać dodany.
+        /// </param>
         public static void DodajPracownika<T>(T pracownik)
         {
             if (pracownik is Administrator)
@@ -163,6 +207,18 @@ namespace SystemAdministracyjnySzpitala
             }
         }
 
+        /// <summary>
+        ///     Analogicznie jak poprzednia, tylko ze do usuwania z listy. Program wyszukuje pracownika do usunięcia za pomocą obiektu, który został mu dostarczony.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     Obsługuje tylko 3 typy:
+        ///       - Administrator,
+        ///       - Lekarz,
+        ///       - Pielegniarka.
+        /// </typeparam>
+        /// <param name="pracownik">
+        ///     Przechowuje pracownika, który ma zostać usunięty.
+        /// </param>
         public static void UsunPracownika<T>(T pracownik)
         {
             if (pracownik is Administrator)
