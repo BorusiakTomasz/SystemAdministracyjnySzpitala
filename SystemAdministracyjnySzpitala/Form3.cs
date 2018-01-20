@@ -181,7 +181,7 @@ namespace SystemAdministracyjnySzpitala
         ///     Funkcja sprawdza:
         ///       1. Czy w wskazanym dniu lekarz o tej samej specializacji nie ma dyżuru,
         ///       2. Czy lekarz w tym miesiacu nie ma 10 dyżurów,
-        ///       3. Czy lekarz nie ma dyżuru dzień wcześniej. (!ToDo)
+        ///       3. Czy lekarz nie ma dyżuru dzień wcześniej.
         ///       
         ///     Jeśli wszystkie wymagania zostały spełnione, dodaje dyżur wybranemu lekarzowi.
         /// </summary>
@@ -206,18 +206,27 @@ namespace SystemAdministracyjnySzpitala
             }
             else
             {
-                if (CzyMogeWziascDyzur(l))
+                if (!CzyWczorajMialDyzur(l, dateTimePicker1.Value))
                 {
-                    l.Dyzury.Add(dateTimePicker1.Value);
-                    monthCalendar1.AddBoldedDate(dateTimePicker1.Value);
-                }
+                    if (CzyMogeWziascDyzur(l))
+                    {
+                        l.Dyzury.Add(dateTimePicker1.Value);
+                        monthCalendar1.AddBoldedDate(dateTimePicker1.Value);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Posiada już 10 dyzurów.");
+                    }
+                } 
+                else
+                    MessageBox.Show("Poprzedniego dnia miał/a dyżur.");
             }
         }
 
         /// <summary>
         ///     Funkcja sprawdza:
         ///       1. Czy pielęgniarka w tym miesiacu nie ma 10 dyżurów,
-        ///       2. Czy pielęgniarka nie ma dyżuru dzień wcześniej. (!ToDo)
+        ///       2. Czy pielęgniarka nie ma dyżuru dzień wcześniej.
         ///       
         ///     Jeśli wszystkie wymagania zostały spełnione, dodaje dyżur wybranej pielęgniarce.
         /// </summary>
@@ -225,15 +234,20 @@ namespace SystemAdministracyjnySzpitala
         {
             Pielegniarka p = listBox3.SelectedItem as Pielegniarka;
 
-            if (CzyMogeWziascDyzur(p))
+            if (!CzyWczorajMialDyzur(p, dateTimePicker1.Value))
             {
-                p.Dyzury.Add(dateTimePicker1.Value);
-                monthCalendar1.AddBoldedDate(dateTimePicker1.Value);
+                if (CzyMogeWziascDyzur(p))
+                {
+                    p.Dyzury.Add(dateTimePicker1.Value);
+                    monthCalendar1.AddBoldedDate(dateTimePicker1.Value);
+                }
+                else
+                {
+                    MessageBox.Show("Posiada już 10 dyzurów.");
+                }
             }
             else
-            {
-                MessageBox.Show("Posiada już 10 dyzurów");
-            }
+                MessageBox.Show("Poprzedniego dnia miał/a dyżur.");
         }
 
         /// <summary>
@@ -310,6 +324,57 @@ namespace SystemAdministracyjnySzpitala
             }
 
             return result;
+        }
+
+        /// <summary>
+        ///     Funkcja sprawdza czy pracownik ma dyżur dzień wcześniej.
+        /// </summary>
+        /// <typeparam name="T">
+        ///     Obsługuje tylko 2 typy:
+        ///       - Lekarz,
+        ///       - Pielegniarka.
+        /// </typeparam>
+        /// <param name="pracownik">
+        ///     Przechowuje aktualnie wybranego pracownika.
+        /// </param>
+        /// <param name="dzien">
+        ///     Przechowuje date dyżuru.
+        /// </param>
+        /// <returns>
+        ///     @true - Pracownik ma dyżur dzień wcześniej.
+        ///     @false - Pracownik NIE ma dyżuru dzień wcześniej.
+        /// </returns>
+        private bool CzyWczorajMialDyzur<T>(T pracownik, DateTime dzien)
+        {
+            DateTime wczoraj = dzien.AddDays(-1);
+
+            if (pracownik is Lekarz)
+            {
+                Lekarz l = pracownik as Lekarz;
+
+                foreach (DateTime element in l.Dyzury)
+                {
+                    if (wczoraj.Day.Equals(element.Day) && wczoraj.Month.Equals(element.Month) && wczoraj.Year.Equals(element.Year))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (pracownik is Pielegniarka)
+            {
+                Pielegniarka p = pracownik as Pielegniarka;
+
+                foreach (DateTime element in p.Dyzury)
+                {
+                    if (wczoraj.Day.Equals(element.Day) && wczoraj.Month.Equals(element.Month) && wczoraj.Year.Equals(element.Year))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

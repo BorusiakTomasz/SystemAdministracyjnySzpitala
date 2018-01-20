@@ -26,7 +26,9 @@ namespace SystemAdministracyjnySzpitala
         /// <summary>
         ///     Inicjalizuje wygląd domyślny dla dodawania nowego pracownika.
         /// </summary>
-        /// <param name="form3"></param>
+        /// <param name="form3">
+        ///     Zmienna potrzeba mi była, aby sterować Form3.
+        /// </param>
         public Form4(Form3 form3)
         {
             InitializeComponent();
